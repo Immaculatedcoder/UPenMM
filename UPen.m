@@ -1,4 +1,4 @@
-function [u,k] = UPen(A,b,lambda,tol)
+function [u,k] = UPen(A,b,L,lambda,epsilon,tol)
 %-------------------------------------------------------------------------%
 % Uniform Penalty Based on Majorization-Minimization Method
 % 
@@ -18,15 +18,16 @@ function [u,k] = UPen(A,b,lambda,tol)
 % Date: 08-April-2025
 %-------------------------------------------------------------------------%
 
-
+% epsilon = 1e-6;
 k=0;
 p = length(lambda);
-while k < 5
+while k < 1000
     pre_lambda = lambda;
-    u = preglsq(A,b,lambda);
+    u = preglsq(A, b, L, lambda);
     
+    LL = (L*u).^2;
     for i = 1:p
-        lambda(i) = (norm(A*u - b)^2)/(p*psi(i));
+        lambda(i) = (norm(A*u - b)^2)/(p*LL(i)+epsilon);
     end
 
     % Checking for Convergence
